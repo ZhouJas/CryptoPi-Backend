@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Web3 = require('web3');
 
 const TransactionSchema = new mongoose.Schema(
     {

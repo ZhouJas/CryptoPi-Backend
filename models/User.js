@@ -3,20 +3,22 @@ const Transaction = require('./Transaction');
 
 const UserSchema = new mongoose.Schema(
     {
-        uid: {
-            type: String,
-            required: true,
-            unique: true
-        },
         username: {
             type: String,
             required: true,
             unique: true
         },
-        email: {
+        ethId: {
+            type: String,
+            required: true
+        },
+        password: {
             type: String,
             required: true,
-            unique: true
+        },
+        azureId: {
+            type: String,
+            required: false
         },
         transactions: {
             type: [Transaction.schema],
@@ -34,7 +36,6 @@ const UserSchema = new mongoose.Schema(
             unique: false,
             default: 0
         },
-        note: String
     },
     {strict: false}
 )
