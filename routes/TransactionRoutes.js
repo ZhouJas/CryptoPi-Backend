@@ -4,7 +4,7 @@ const checkIfAuthenticated = require('../auth/utils')
 const { translateAliases } = require('../models/User')
 const User = require('../models/User')
 const Transaction = require('../models/Transaction')
-import { v4 as uuidv4 } from 'uuid';
+
 
 
 router.post('/createTransaction', function(req, res) {
@@ -29,7 +29,8 @@ router.post('/createTransaction', function(req, res) {
             // This is where you send through ethereum
 
             // Create the actual transaction object to log this
-            var transaction = Transaction({uid:uuidv4(), incoming: false, counterparty: counterparty, date: Date.now, amount: amount})
+            var rng = Math.random
+            var transaction = Transaction({uid:rng.toString(), incoming: false, counterparty: counterparty, date: Date.now, amount: amount})
             Transaction.save(function(err) {
                 if (err) {
                     res.send('Error creating transaction')
