@@ -1,7 +1,5 @@
 const express = require('express')
 const router = express.Router()
-const checkIfAuthenticated = require('../auth/utils')
-const { translateAliases } = require('../models/User')
 const User = require('../models/User')
 const Transaction = require('../models/Transaction')
 
@@ -50,3 +48,4 @@ router.post('/createTransaction', function(req, res) {
 
 })
 
+module.exports = router

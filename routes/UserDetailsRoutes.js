@@ -1,9 +1,5 @@
 const express = require('express')
 const router = express.Router()
-const checkIfAuthenticated = require('../auth/utils')
-const multer = require('multer')
-const upload = multer({ dest: 'uploads/' })
-const Web3 = require('web3');
 const User = require('../models/User')
 
 router.post('/register', function(req,res){
