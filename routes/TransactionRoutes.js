@@ -16,8 +16,8 @@ router.post('/createTransaction', function(req, res) { // http://localhost:8080/
     const facePicture = req.body.file;
 
     User.findOne({username: username}).then( (user) => {
+        User.findOne({username: counterparty}).then( (counter) => {
         console.log(user) // Debug statement, remove this eventually
-        counterparty = User.findOne({username: counterparty})
         if (user == null) res.status(404).send('Error fetching homepage details')
         if (password != user.password) {
             res.status(401).send('Unauthorized')
@@ -29,14 +29,14 @@ router.post('/createTransaction', function(req, res) { // http://localhost:8080/
         if (amount <= balance) {
             // We can send money!
             user.balance -= amount;
-            counterparty.balance+=amount;
+            counter.balance+=amount;
             user.save(function (err) {
                 if (err) {
                     res.send(err)
                     return
                 };
             });
-            counterparty.save(function (err) {
+            counter.save(function (err) {
                 if (err) {
                     res.send(err)
                     return
@@ -59,6 +59,9 @@ router.post('/createTransaction', function(req, res) { // http://localhost:8080/
         } else {
             res.send('Too little money')
         }
+        }).catch((err) => {
+            res.status(500).send('Error fetching details:' + err)
+        })
     })
     .catch((err) => {
         res.status(500).send('Error fetching details:' + err)
