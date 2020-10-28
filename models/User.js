@@ -22,11 +22,12 @@ const UserSchema = new mongoose.Schema(
         },
         transactions: {
             type: [Transaction.schema],
+            unique: false,
             default: []
         },
         recentContacts: {
             type: [String],
-            required: true,
+            required: false,
             unique: false,
             default: []
         },

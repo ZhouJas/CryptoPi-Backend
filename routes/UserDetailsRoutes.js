@@ -14,6 +14,7 @@ function convert() {
 router.post('/register', function(req,res){
     const username = req.body.username; 
     const password = req.body.password;
+    const balance = req.body.balance; //For testing only, to integrate with eth later
     const photo = req.body.photo; // This should be passed to the azure api --> we can do this part later
 
     // ETH id should be the actual ethereum id
@@ -22,7 +23,7 @@ router.post('/register', function(req,res){
     // This should now send to the azure api
 
 
-    var user = User({username: username, password: password, ethId: 'feifjeiofjewiof', recentContacts: []})
+    var user = User({username: username, password: password, balance: balance, ethId: 'feifjeiofjewiof'})
     user.save(function (err) {
         if (err) {
             res.send(err)

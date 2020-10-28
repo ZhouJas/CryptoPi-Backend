@@ -17,6 +17,7 @@ router.post('/createTransaction', function(req, res) { // http://localhost:8080/
 
     User.findOne({username: username}).then( (user) => {
         console.log(user) // Debug statement, remove this eventually
+        counterparty = User.findOne({username: counterparty})
         if (user == null) res.status(404).send('Error fetching homepage details')
         if (password != user.password) {
             res.status(401).send('Unauthorized')
@@ -26,13 +27,26 @@ router.post('/createTransaction', function(req, res) { // http://localhost:8080/
 
 
         if (amount <= balance) {
-             // We can send money!
+            // We can send money!
+            user.balance -= amount;
+            counterparty.balance+=amount;
+            user.save(function (err) {
+                if (err) {
+                    res.send(err)
+                    return
+                };
+            });
+            counterparty.save(function (err) {
+                if (err) {
+                    res.send(err)
+                    return
+                };
+            });
             // This is where you send through ethereum
-            
             // Create the actual transaction object to log this
             var rng = Math.random
             var transaction = Transaction({uid:rng.toString(), incoming: false, counterparty: counterparty, date: Date.now, amount: amount})
-
+            res.send(`Transction Success! ${amount} ETH was successfully sent!`);
             // TODO: add transaction to users transactions array and then save the user
 
             // Transaction.save(function(err) {
@@ -41,6 +55,7 @@ router.post('/createTransaction', function(req, res) { // http://localhost:8080/
             //         return
             //     }; 
             // })
+            
         } else {
             res.send('Too little money')
         }
