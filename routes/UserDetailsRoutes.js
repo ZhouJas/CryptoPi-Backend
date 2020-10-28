@@ -87,7 +87,7 @@ User {
 
 */
 
-//http://localhost:8080/transactions/getTransactions
+//http://localhost:8080/userDetails/getTransactions
 router.get('/getTransactions', function(req, res) {
     const recent = req.body.recent; // This tells you if you need to only send back recent ones (idk maybe like last 5, or maybe in last week)
     const username = req.body.username; // Get user ID
