@@ -9,7 +9,7 @@ const TransactionSchema = new mongoose.Schema(
         },
         incoming: Boolean, // If receiving, this is true, if sending, this is false
         counterparty: String, // Other person
-        date: Date, 
+        date: String, 
         amount: Number
     },
     {strict: false}
