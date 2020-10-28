@@ -1,6 +1,15 @@
 const express = require('express')
+const Transaction = require('../models/Transaction')
 const router = express.Router()
 const User = require('../models/User')
+
+//http://localhost:8080/register
+// Request body --> JSON file 
+
+
+function convert() {
+    // our Transaction() object
+}
 
 router.post('/register', function(req,res){
     const username = req.body.username; 
@@ -8,21 +17,20 @@ router.post('/register', function(req,res){
     const photo = req.body.photo; // This should be passed to the azure api --> we can do this part later
 
     // ETH id should be the actual ethereum id
-    var user = User({username: username, password: password, ethId: 'feifjeiofjewiof'})
+
+
+    // This should now send to the azure api
+
+
+    var user = User({username: username, password: password, ethId: 'feifjeiofjewiof', recentContacts: []})
     user.save(function (err) {
         if (err) {
-            res.send('Error creating account')
+            res.send(err)
             return
         };
-
-        // This should now send to the azure api
-
         res.send('Created account!')
     });
-
 }) 
-
-
 
 router.get('/balance', function(req, res) {
     const username = req.body.username; // Get user ID
@@ -35,7 +43,11 @@ router.get('/balance', function(req, res) {
             res.status(401).send('Unauthorized')
             return
         }
+        // Get new balance
+        // Update it for the user
+
         var balance = user.balance
+
         res.json({
             balance: balance,
         });
@@ -45,9 +57,38 @@ router.get('/balance', function(req, res) {
     })
 })
 
-router.get('/transactions', function(req, res) {
-    const recent = req.query.recent; // This tells you if you need to only send back recent ones (idk maybe like last 5, or maybe in last week)
-    
+
+/*
+
+Without populate
+
+
+User {
+    name: "Hello"
+    ...
+    transactions: [Transaction1, Transaction2, Transaction3]
+}
+
+With populate
+
+User {
+    name: "Hello"
+    ...
+    transactions: [
+        {
+            uuid: 24343243
+            incoming: true
+            counterparty: "hwfeufehuwei"
+        }    
+    ]
+}
+
+
+*/
+
+//http://localhost:8080/transactions/getTransactions
+router.get('/getTransactions', function(req, res) {
+    const recent = req.body.recent; // This tells you if you need to only send back recent ones (idk maybe like last 5, or maybe in last week)
     const username = req.body.username; // Get user ID
     const password = req.body.password;
     
