@@ -8,6 +8,12 @@ const UserSchema = new mongoose.Schema(
             required: true,
             unique: true
         },
+        // piTag: { //use this code after pi integration
+        //     type: String,
+        //     required: true,
+        //     unique: true
+        // },
+        //pi tag
         ethId: {
             type: String,
             required: true
