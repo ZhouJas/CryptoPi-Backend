@@ -8,6 +8,12 @@ const UserSchema = new mongoose.Schema(
             required: true,
             unique: true
         },
+        // piTag: { //use this code after pi integration
+        //     type: String,
+        //     required: true,
+        //     unique: true
+        // },
+        //pi tag
         ethId: {
             type: String,
             required: true
@@ -22,11 +28,12 @@ const UserSchema = new mongoose.Schema(
         },
         transactions: {
             type: [Transaction.schema],
+            unique: false,
             default: []
         },
         recentContacts: {
             type: [String],
-            required: true,
+            required: false,
             unique: false,
             default: []
         },

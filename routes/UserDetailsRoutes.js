@@ -14,6 +14,8 @@ function convert() {
 router.post('/register', function(req,res){
     const username = req.body.username; 
     const password = req.body.password;
+    const tag = req.body.tag;
+    const balance = req.body.balance; //For testing only, to integrate with eth later
     const photo = req.body.photo; // This should be passed to the azure api --> we can do this part later
 
     // ETH id should be the actual ethereum id
@@ -22,7 +24,8 @@ router.post('/register', function(req,res){
     // This should now send to the azure api
 
 
-    var user = User({username: username, password: password, ethId: 'feifjeiofjewiof', recentContacts: []})
+    var user = User({username: username, password: password, balance: balance, ethId: 'feifjeiofjewiof'})
+    // var user = User({username: username, password: password, piTag: tag, balance: balance, ethId: 'feifjeiofjewiof'}) //use this code after pi integration
     user.save(function (err) {
         if (err) {
             res.send(err)
@@ -86,7 +89,7 @@ User {
 
 */
 
-//http://localhost:8080/transactions/getTransactions
+//http://localhost:8080/userDetails/getTransactions
 router.get('/getTransactions', function(req, res) {
     const recent = req.body.recent; // This tells you if you need to only send back recent ones (idk maybe like last 5, or maybe in last week)
     const username = req.body.username; // Get user ID
