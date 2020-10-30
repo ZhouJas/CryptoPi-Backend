@@ -2,19 +2,62 @@ const express = require('express')
 const Transaction = require('../models/Transaction')
 const router = express.Router()
 const User = require('../models/User')
+const PiTag = require('../models/PiTag')
 
 //http://localhost:8080/register
 // Request body --> JSON file 
-
 
 function convert() {
     // our Transaction() object
 }
 
+router.post('/addPi', function(req,res){
+    const piTag = req.body.piTag;
+    var tag = PiTag({piTag: piTag})
+
+    tag.save(function (err) {
+        if (err) {
+            res.send(err)
+            return
+        };
+        res.send('Pi Tag added to list')
+    });
+})
+
+router.get('/getPis', function(req,res){
+    // PiTag.find({}).toArray(function(err,result){
+    PiTag.find({}).then( (tag) => {
+        res.json({
+            tag:tag
+        })
+
+    }).catch((err) => {
+        res.status(500).send('Error fetching details:' + err)
+    })
+})
+
+router.post('registerPi',function(req,res){
+    const username = req.body.username;
+    const password = req.body.password;
+    const piTag = req.body.piTag;
+
+    User.findOne({username: username}).then( (user) => {
+        if (user == null) res.status(404).send('Error fetching homepage details')
+        if (password != user.password) {
+            res.status(401).send('Unauthorized')
+            return
+        }
+
+        user.piTag = piTag;
+
+    }).catch((err) => {
+        res.status(500).send('Error fetching details:' + err)
+    })
+})
+
 router.post('/register', function(req,res){
     const username = req.body.username; 
     const password = req.body.password;
-    const tag = req.body.tag;
     const balance = req.body.balance; //For testing only, to integrate with eth later
     const photo = req.body.photo; // This should be passed to the azure api --> we can do this part later
 
