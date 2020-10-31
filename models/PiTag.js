@@ -6,6 +6,7 @@ const PiTagSchema = new mongoose.Schema(
             type: String,
             required: true
         },
+        date: String,
     },
     {strict: false}
 )

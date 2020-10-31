@@ -13,7 +13,16 @@ function convert() {
 
 router.post('/addPi', function(req,res){ //from pi, add pi to list of available piss
     const piTag = req.body.piTag;
-    var tag = PiTag({piTag: piTag})
+
+    var today = new Date();
+
+    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+
+    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+
+    var dateTime = date+' '+time;
+
+    var tag = PiTag({piTag: piTag, date: dateTime.toString()})
 
     User.count({piTag: piTag}, function (err, count){ 
         PiTag.count({piTag: piTag}, function (err, count2){ 
@@ -92,7 +101,7 @@ router.post('/register', function(req,res){
     // This should now send to the azure api
 
 
-    var user = User({username: username, password: password, balance: balance, ethId: 'feifjeiofjewiof',piTag: 'temp'})
+    var user = User({username: username, password: password, balance: balance, ethId: 'feifjeiofjewiof'})
     // var user = User({username: username, password: password, piTag: tag, balance: balance, ethId: 'feifjeiofjewiof'}) //use this code after pi integration
     user.save(function (err) {
         if (err) {
