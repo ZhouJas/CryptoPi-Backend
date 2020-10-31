@@ -4,8 +4,7 @@ const PiTagSchema = new mongoose.Schema(
     {
         piTag: {
             type: String,
-            required: true,
-            unique: true
+            required: true
         },
     },
     {strict: false}

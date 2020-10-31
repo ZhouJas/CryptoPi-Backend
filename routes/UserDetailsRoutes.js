@@ -11,21 +11,32 @@ function convert() {
     // our Transaction() object
 }
 
-router.post('/addPi', function(req,res){
+router.post('/addPi', function(req,res){ //from pi, add pi to list of available piss
     const piTag = req.body.piTag;
     var tag = PiTag({piTag: piTag})
 
-    tag.save(function (err) {
-        if (err) {
-            res.send(err)
-            return
-        };
-        res.send('Pi Tag added to list')
+    User.count({piTag: piTag}, function (err, count){ 
+        PiTag.count({piTag: piTag}, function (err, count2){ 
+            if(count>0){
+                res.send("Pi already registered")
+            }else if(count2>0){
+                res.send("Pi already added to list")
+            }else{
+                tag.save(function (err) {
+                    if (err) {
+                        res.send(err)
+                        return
+                    };
+                    res.send('Pi Tag added to list')
+                });
+            }
+        });
     });
+
+    
 })
 
-router.get('/getPis', function(req,res){
-    // PiTag.find({}).toArray(function(err,result){
+router.get('/getPis', function(req,res){ //lists pis available to register to account (meant for webapp)
     PiTag.find({}).then( (tag) => {
         res.json({
             tag:tag
@@ -36,7 +47,7 @@ router.get('/getPis', function(req,res){
     })
 })
 
-router.post('registerPi',function(req,res){
+router.post('/registerPi',function(req,res){
     const username = req.body.username;
     const password = req.body.password;
     const piTag = req.body.piTag;
@@ -48,11 +59,25 @@ router.post('registerPi',function(req,res){
             return
         }
 
-        user.piTag = piTag;
+        user.piTag = piTag; //sets the users pi tag
+
+        PiTag.findOne({piTag:piTag}).then((tag) => {
+            tag.remove() //removes pi tag from list of available pi tags
+        })
+
+        user.save(function (err) {
+            if (err) {
+                res.send(err)
+                return
+            };
+            res.send("Registered Pi to account")
+        });
 
     }).catch((err) => {
         res.status(500).send('Error fetching details:' + err)
     })
+
+
 })
 
 router.post('/register', function(req,res){
@@ -67,7 +92,7 @@ router.post('/register', function(req,res){
     // This should now send to the azure api
 
 
-    var user = User({username: username, password: password, balance: balance, ethId: 'feifjeiofjewiof'})
+    var user = User({username: username, password: password, balance: balance, ethId: 'feifjeiofjewiof',piTag: 'temp'})
     // var user = User({username: username, password: password, piTag: tag, balance: balance, ethId: 'feifjeiofjewiof'}) //use this code after pi integration
     user.save(function (err) {
         if (err) {
