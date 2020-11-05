@@ -92,6 +92,7 @@ router.post('/registerPi',function(req,res){
 router.post('/register', function(req,res){
     const username = req.body.username; 
     const password = req.body.password;
+    const piTag = req.body.piTag
     const balance = req.body.balance; //For testing only, to integrate with eth later
     const photo = req.body.photo; // This should be passed to the azure api --> we can do this part later
 
@@ -101,8 +102,8 @@ router.post('/register', function(req,res){
     // This should now send to the azure api
 
 
-    var user = User({username: username, password: password, balance: balance, ethId: 'feifjeiofjewiof'})
-    // var user = User({username: username, password: password, piTag: tag, balance: balance, ethId: 'feifjeiofjewiof'}) //use this code after pi integration
+    //var user = User({username: username, password: password, balance: balance, ethId: 'feifjeiofjewiof'})
+    var user = User({username: username, password: password, piTag: tag, balance: balance, ethId: 'feifjeiofjewiof'}) //use this code after pi integration
     user.save(function (err) {
         if (err) {
             res.send(err)
