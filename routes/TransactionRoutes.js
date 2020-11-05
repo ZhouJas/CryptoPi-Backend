@@ -11,14 +11,14 @@ router.post('/createTransaction', function(req, res) { // http://localhost:8080/
     const tag = req.body.tag; // Get user ID
     const password = req.body.pass;
     const reader = req.body.reader; //use this code after pi integration
-    const username = req.body.username; // Get user ID
-    const counterparty = req.body.counterparty;
-    const amount = req.body.amount;
+    // const username = req.body.username; // Get user ID
+    // const counterparty = req.body.counterparty;
+    const amount = req.body.money;
     const note = req.body.note;
     const facePicture = req.body.file;
 
     User.findOne({piTag: tag}).then( (user) => {
-        User.findOne({piTag: tag}).then( (counter) => { //this will be the code to use when we integrate the pis
+        User.findOne({piTag: reader}).then( (counter) => { //this will be the code to use when we integrate the pis
 
         if (user == null) res.status(404).send('Error fetching User details')
         if (password != user.password) {
@@ -49,7 +49,7 @@ router.post('/createTransaction', function(req, res) { // http://localhost:8080/
             user.transactions.push(transaction);
             
             transaction.incoming = true;
-            transaction.counterparty = username;
+            transaction.counterparty = user.username;
 
             counter.transactions.push(transaction);
 
