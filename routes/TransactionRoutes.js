@@ -9,7 +9,7 @@ const Transaction = require('../models/Transaction')
 
 router.post('/createTransaction', function(req, res) { // http://localhost:8080/transactions/createTransaction
     const tag = req.body.tag; // Get user ID
-    const password = req.body.pass;
+    //const password = req.body.pass; add back password
     const reader = req.body.reader; //use this code after pi integration
     // const username = req.body.username; // Get user ID
     // const counterparty = req.body.counterparty;
@@ -21,10 +21,10 @@ router.post('/createTransaction', function(req, res) { // http://localhost:8080/
         User.findOne({piTag: reader}).then( (counter) => { //this will be the code to use when we integrate the pis
 
         if (user == null) res.status(404).send('Error fetching User details')
-        if (password != user.password) {
+        /*if (password != user.password) {
             res.status(401).send('Unauthorized')
             return
-        }
+        } add back for later*/
         var balance = user.balance // This should eventually get from ethereum
 
 
