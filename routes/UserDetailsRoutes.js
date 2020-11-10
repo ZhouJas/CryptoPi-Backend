@@ -36,8 +36,8 @@ router.post('/register', function(req,res){
 }) 
 
 router.get('/balance', function(req, res) {
-    const username = req.body.username; // Get user ID
-    const password = req.body.password;
+    const username = req.query.username; // Get user ID
+    const password = req.query.password;
 
     User.findOne({username: username}).then( (user) => {
         console.log(user) // Debug statement, remove this eventually
@@ -56,7 +56,7 @@ router.get('/balance', function(req, res) {
         });
     })
     .catch((err) => {
-        res.status(500).send('Error fetching details:' + err)
+        return;
     })
 })
 
@@ -91,9 +91,9 @@ User {
 
 //http://localhost:8080/userDetails/getTransactions
 router.get('/getTransactions', function(req, res) {
-    const recent = req.body.recent; // This tells you if you need to only send back recent ones (idk maybe like last 5, or maybe in last week)
-    const username = req.body.username; // Get user ID
-    const password = req.body.password;
+    const recent =  false;//req.query.recent; // This tells you if you need to only send back recent ones (idk maybe like last 5, or maybe in last week)
+    const username = req.query.username; // Get user ID
+    const password = req.query.password;
     
     User.findOne({username: username}).populate('transactions').then( (user) => {
         console.log(user) // Debug statement, remove this eventually
