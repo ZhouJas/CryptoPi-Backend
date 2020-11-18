@@ -44,14 +44,14 @@ router.post('/createTransaction', function(req, res) { // http://localhost:8080/
 
             var dateTime = date+' '+time;
             
-            var transaction = Transaction({uid:rng.toString(), incoming: false, counterparty: counterparty, date: dateTime.toString(), amount: amount})
+            var transaction = Transaction({uid:rng.toString(), incoming: false, counterparty: counter.username, date: dateTime.toString(), amount: amount})
             
-            user.transactions.push(transaction);
+            user.transactions.unshift(transaction);
             
             transaction.incoming = true;
             transaction.counterparty = user.username;
 
-            counter.transactions.push(transaction);
+            counter.transactions.unshift(transaction);
 
 
             user.save(function (err) {
