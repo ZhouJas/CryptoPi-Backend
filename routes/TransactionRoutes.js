@@ -12,8 +12,8 @@ const Transaction = require('../models/Transaction')
 const axios = require('axios').default;
 
 // Add a valid subscription key and endpoint to your environment variables.
-let subscriptionKey = process.env['1bed1a2a467947e2ad81cc6807288c28']
-let endpoint = process.env['https://cryptopi.cognitiveservices.azure.com'] + '/face/v1.0/detect'
+let subscriptionKey = 'key'
+let endpoint = 'env'
 let imageUrl = 'https://raw.githubusercontent.com/PhilbertLou/cryptopipi/main/IMG_2876.JPG?token=AP3TC5WYZVODCEOW6VSMYWS7YG2X2'
 
 router.post('/createTransaction', function(req, res) { // http://localhost:8080/transactions/createTransaction
