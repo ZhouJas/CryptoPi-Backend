@@ -11,7 +11,7 @@ const axios = require('axios').default;
 
 // Add a valid subscription key and endpoint to your environment variables.
 let subscriptionKey = process.env['1bed1a2a467947e2ad81cc6807288c28']
-let endpoint = process.env['https://cryptopi.cognitiveservices.azure.com'] + '/face/v1.0/detect'
+let endpoint = process.env['https://cryptopi.cognitiveservices.azure.com/'] + '/face/v1.0/detect'
 let imageUrl = 'https://raw.githubusercontent.com/PhilbertLou/cryptopipi/main/IMG_2877.JPG?token=AP3TC5VS2X2VEBQWSJSGJFC7YG22A'
 
 // Optionally, replace with your own image URL (for example a .jpg or .png URL).
@@ -23,6 +23,28 @@ let imageUrl = 'https://raw.githubusercontent.com/PhilbertLou/cryptopipi/main/IM
 function convert() {
     // our Transaction() object
 }
+
+router.get('/testiong', function(req, res) {
+    axios({
+        method: 'post',
+        url: endpoint,
+        params : {
+            detectionModel: 'detection_02',
+            returnFaceId: true
+        },
+        data: {
+            url: imageUrl,
+        },
+        headers: { 'Ocp-Apim-Subscription-Key': subscriptionKey }
+    }).then(function (response) {
+        console.log('Status text: ' + response.status)
+        console.log('Status text: ' + response.statusText)
+        console.log()
+        console.log(response.data)
+    }).catch(function (error) {
+        console.log(error)
+    });
+})
 
 router.post('/addPi', function(req,res){ //from pi, add pi to list of available piss
     const piTag = req.body.piTag;
