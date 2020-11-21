@@ -4,6 +4,19 @@ const router = express.Router()
 const User = require('../models/User')
 const PiTag = require('../models/PiTag')
 
+//azure stuff that may be mandatory to add
+'use strict';
+
+const axios = require('axios').default;
+
+// Add a valid subscription key and endpoint to your environment variables.
+let subscriptionKey = process.env['1bed1a2a467947e2ad81cc6807288c28']
+let endpoint = process.env['https://cryptopi.cognitiveservices.azure.com'] + '/face/v1.0/detect'
+let imageUrl = 'https://raw.githubusercontent.com/PhilbertLou/cryptopipi/main/IMG_2877.JPG?token=AP3TC5VS2X2VEBQWSJSGJFC7YG22A'
+
+// Optionally, replace with your own image URL (for example a .jpg or .png URL).
+//let imageUrl = 'https://raw.githubusercontent.com/Azure-Samples/cognitive-services-sample-data-files/master/ComputerVision/Images/faces.jpg'
+
 //http://localhost:8080/register
 // Request body --> JSON file 
 
@@ -101,8 +114,34 @@ router.post('/register', function(req,res){
 
     // This should now send to the azure api
 
+    // Send a POST request
 
-    var user = User({username: username, password: password, balance: balance, ethId: 'feifjeiofjewiof'})
+    var ID
+
+    axios({
+        method: 'post',
+        url: endpoint,
+        params : {
+            detectionModel: 'detection_02',
+            returnFaceId: true
+        },
+        data: {
+            url: imageUrl, 
+        },
+        headers: { 'Ocp-Apim-Subscription-Key': subscriptionKey }
+    }).then(function (response) {
+        console.log('Status text: ' + response.status)
+        console.log('Status text: ' + response.statusText)
+        console.log()
+        console.log(response.data)
+        ID = response.data.faceId
+    }).catch(function (error) {
+        console.log(error)
+    });
+
+
+
+    var user = User({username: username, password: password, balance: balance, ethId: 'feifjeiofjewiof', azureId: ID})
     // var user = User({username: username, password: password, piTag: tag, balance: balance, ethId: 'feifjeiofjewiof'}) //use this code after pi integration
     user.save(function (err) {
         if (err) {

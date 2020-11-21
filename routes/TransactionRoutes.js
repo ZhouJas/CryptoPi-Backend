@@ -6,6 +6,15 @@ const Transaction = require('../models/Transaction')
 
 // USE THE WEB3.JS library --> connect to ethereum
 // Azure cognitive api
+//Azure stuff that may need to be kept here
+'use strict';
+
+const axios = require('axios').default;
+
+// Add a valid subscription key and endpoint to your environment variables.
+let subscriptionKey = process.env['1bed1a2a467947e2ad81cc6807288c28']
+let endpoint = process.env['https://cryptopi.cognitiveservices.azure.com'] + '/face/v1.0/detect'
+let imageUrl = 'https://raw.githubusercontent.com/PhilbertLou/cryptopipi/main/IMG_2876.JPG?token=AP3TC5WYZVODCEOW6VSMYWS7YG2X2'
 
 router.post('/createTransaction', function(req, res) { // http://localhost:8080/transactions/createTransaction
     const tag = req.body.tag; // Get user ID
@@ -21,10 +30,37 @@ router.post('/createTransaction', function(req, res) { // http://localhost:8080/
         User.findOne({piTag: reader}).then( (counter) => { //this will be the code to use when we integrate the pis
 
         if (user == null) res.status(404).send('Error fetching User details')
-        /*if (password != user.password) {
+        
+        //AZURE STUFF
+        var faceId
+
+        axios({
+            method: 'post',
+            url: endpoint,
+            params : {
+                detectionModel: 'detection_02',
+                returnFaceId: true
+            },
+            data: {
+                url: imageUrl, 
+            },
+            headers: { 'Ocp-Apim-Subscription-Key': subscriptionKey }
+        }).then(function (response) {
+            console.log('Status text: ' + response.status)
+            console.log('Status text: ' + response.statusText)
+            console.log()
+            console.log(response.data)
+            faceId = response.data.faceId
+        }).catch(function (error) {
+            console.log(error)
+        });
+
+        if (faceId != user.azureId) {
             res.status(401).send('Unauthorized')
             return
-        } add back for later*/
+        }
+
+
         var balance = user.balance // This should eventually get from ethereum
 
 
