@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const EthAccount = require('./EthAccount');
 const Transaction = require('./Transaction');
 
 const UserSchema = new mongoose.Schema(
@@ -12,9 +13,9 @@ const UserSchema = new mongoose.Schema(
             type: String,
             required: false
         },
-        //pi tag
-        ethId: {
-            type: String,
+        ethAccount: {
+            type: EthAccount.schema,
+            unique: true,
             required: true
         },
         password: {
@@ -37,13 +38,13 @@ const UserSchema = new mongoose.Schema(
             default: []
         },
         balance: {
-            type: Number,
+            type: String,
             required: true,
             unique: false,
             default: 0
         },
     },
-    {strict: false}
+    { strict: false }
 )
 
 module.exports = User = mongoose.model("users", UserSchema);
