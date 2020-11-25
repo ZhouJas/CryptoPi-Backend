@@ -10,8 +10,8 @@ const PiTag = require('../models/PiTag')
 const axios = require('axios').default;
 
 // Add a valid subscription key and endpoint to your environment variables.
-let subscriptionKey = 'key'
-let endpoint = 'endpoint'
+let subscriptionKey = '49d2541df0f84c3798a1cc8a50ec9180'
+let endpoint = 'https://crypto-pi.cognitiveservices.azure.com/face/v1.0/detect'
 let imageUrl = 'https://raw.githubusercontent.com/PhilbertLou/cryptopipi/main/IMG_2877.JPG?token=AP3TC5VS2X2VEBQWSJSGJFC7YG22A'
 
 // Optionally, replace with your own image URL (for example a .jpg or .png URL).
@@ -24,7 +24,7 @@ function convert() {
     // our Transaction() object
 }
 
-router.get('/testiong', function(req, res) {
+router.get('/testing', function(req, res) {
     axios({
         method: 'post',
         url: endpoint,
@@ -137,8 +137,8 @@ router.post('/register', function(req,res){
     // This should now send to the azure api
 
     // Send a POST request
-
-    var ID
+    
+    ID = 'test';
 
     axios({
         method: 'post',
@@ -148,7 +148,7 @@ router.post('/register', function(req,res){
             returnFaceId: true
         },
         data: {
-            url: imageUrl, 
+            url: photo, 
         },
         headers: { 'Ocp-Apim-Subscription-Key': subscriptionKey }
     }).then(function (response) {
@@ -156,22 +156,25 @@ router.post('/register', function(req,res){
         console.log('Status text: ' + response.statusText)
         console.log()
         console.log(response.data)
-        ID = response.data.faceId
+        ID = response.data[0].faceId
+        console.log(ID)
+        var user = User({username: username, password: password, balance: balance, ethId: 'feifjeiofjewiof', azureId: ID})
+        // var user = User({username: username, password: password, piTag: tag, balance: balance, ethId: 'feifjeiofjewiof'}) //use this code after pi integration
+        user.save(function (err) {
+            if (err) {
+                res.send(err)
+                return
+            };
+            res.send('Created account!')
+        });
     }).catch(function (error) {
         console.log(error)
     });
 
 
+    // console.log("test");
 
-    var user = User({username: username, password: password, balance: balance, ethId: 'feifjeiofjewiof', azureId: ID})
-    // var user = User({username: username, password: password, piTag: tag, balance: balance, ethId: 'feifjeiofjewiof'}) //use this code after pi integration
-    user.save(function (err) {
-        if (err) {
-            res.send(err)
-            return
-        };
-        res.send('Created account!')
-    });
+    
 }) 
 
 router.get('/balance', function(req, res) {

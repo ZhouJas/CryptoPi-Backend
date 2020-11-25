@@ -12,9 +12,10 @@ const Transaction = require('../models/Transaction')
 const axios = require('axios').default;
 
 // Add a valid subscription key and endpoint to your environment variables.
-let subscriptionKey = 'key'
-let endpoint = 'env'
+let subscriptionKey = '49d2541df0f84c3798a1cc8a50ec9180'
+let endpoint = 'https://crypto-pi.cognitiveservices.azure.com/face/v1.0/detect'
 let imageUrl = 'https://raw.githubusercontent.com/PhilbertLou/cryptopipi/main/IMG_2876.JPG?token=AP3TC5WYZVODCEOW6VSMYWS7YG2X2'
+
 
 router.post('/createTransaction', function(req, res) { // http://localhost:8080/transactions/createTransaction
     const tag = req.body.tag; // Get user ID
@@ -42,7 +43,7 @@ router.post('/createTransaction', function(req, res) { // http://localhost:8080/
                 returnFaceId: true
             },
             data: {
-                url: imageUrl, 
+                url: facePicture, 
             },
             headers: { 'Ocp-Apim-Subscription-Key': subscriptionKey }
         }).then(function (response) {
@@ -50,73 +51,76 @@ router.post('/createTransaction', function(req, res) { // http://localhost:8080/
             console.log('Status text: ' + response.statusText)
             console.log()
             console.log(response.data)
-            faceId = response.data.faceId
+            faceId = response.data[0].faceId
+            
+            console.log(faceId)
+            console.log(user.azureId)
+
+            if (faceId != user.azureId) {
+                res.status(401).send(`faceId: ${faceId}, user.azureId:${user.azureId}`)
+                return
+            }
+            
+            var balance = user.balance // This should eventually get from ethereum
+    
+            if (amount <= balance) {
+                // We can send money!
+                //deducting/adding amount from repsective accounts
+                user.balance -= amount;
+                counter.balance+=amount;
+    
+                // Create the actual transaction object to log this
+                var rng = Math.floor(Math.random() * 1000000000);
+                var today = new Date();
+    
+                var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    
+                var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    
+                var dateTime = date+' '+time;
+                
+                var transaction = Transaction({uid:rng.toString(), incoming: false, counterparty: counter.username, date: dateTime.toString(), amount: amount})
+                
+                user.transactions.unshift(transaction);
+                
+                transaction.incoming = true;
+                transaction.counterparty = user.username;
+    
+                counter.transactions.unshift(transaction);
+    
+    
+                user.save(function (err) {
+                    if (err) {
+                        res.send(err)
+                        return
+                    };
+                });
+                counter.save(function (err) {
+                    if (err) {
+                        res.send(err)
+                        return
+                    };
+                });
+                // This is where you send through ethereum
+                
+                res.send(`Transaction Success! ${amount} ETH was successfully sent!`);
+                // TODO: add transaction to users transactions array and then save the user
+    
+                // Transaction.save(function(err) {
+                //     if (err) {
+                //         res.send('Error creating transaction')
+                //         return
+                //     }; 
+                // })
+                
+            } else {
+                res.send('Too little money')
+            }
+
         }).catch(function (error) {
             console.log(error)
-        });
+        })
 
-        if (faceId != user.azureId) {
-            res.status(401).send('Unauthorized')
-            return
-        }
-
-
-        var balance = user.balance // This should eventually get from ethereum
-
-
-        if (amount <= balance) {
-            // We can send money!
-            //deducting/adding amount from repsective accounts
-            user.balance -= amount;
-            counter.balance+=amount;
-
-            // Create the actual transaction object to log this
-            var rng = Math.floor(Math.random() * 1000000000);
-            var today = new Date();
-
-            var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-
-            var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-
-            var dateTime = date+' '+time;
-            
-            var transaction = Transaction({uid:rng.toString(), incoming: false, counterparty: counter.username, date: dateTime.toString(), amount: amount})
-            
-            user.transactions.unshift(transaction);
-            
-            transaction.incoming = true;
-            transaction.counterparty = user.username;
-
-            counter.transactions.unshift(transaction);
-
-
-            user.save(function (err) {
-                if (err) {
-                    res.send(err)
-                    return
-                };
-            });
-            counter.save(function (err) {
-                if (err) {
-                    res.send(err)
-                    return
-                };
-            });
-            // This is where you send through ethereum
-            
-            res.send(`Transaction Success! ${amount} ETH was successfully sent!`);
-            // TODO: add transaction to users transactions array and then save the user
-
-            // Transaction.save(function(err) {
-            //     if (err) {
-            //         res.send('Error creating transaction')
-            //         return
-            //     }; 
-            // })
-            
-        } else {
-            res.send('Too little money')
-        }
         }).catch((err) => {
             res.status(500).send('Error fetching details:' + err)
         })
