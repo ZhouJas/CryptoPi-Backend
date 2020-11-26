@@ -23,10 +23,6 @@ let imageUrl = 'https://raw.githubusercontent.com/PhilbertLou/cryptopipi/main/IM
 //http://localhost:8080/register
 // Request body --> JSON file 
 
-function convert() {
-    // our Transaction() object
-}
-
 router.post('/addPi', function (req, res) { //from pi, add pi to list of available piss
     const piTag = req.body.piTag;
 
@@ -127,7 +123,7 @@ router.post('/register', function (req, res) {
         },
         headers: { 'Ocp-Apim-Subscription-Key': subscriptionKey }
     }).then(function (response) {
-        ID = response.data.persistedFaceId
+        var ID = response.data.persistedFaceId
         if (privateKey != null) {
             const account = web3.eth.accounts.privateKeyToAccount(privateKey);
             const ethAccount = EthAccount({ address: account.address, privateKey: account.privateKey })
