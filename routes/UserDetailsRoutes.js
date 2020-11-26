@@ -10,8 +10,8 @@ const PiTag = require('../models/PiTag')
 const axios = require('axios').default;
 
 // Add a valid subscription key and endpoint to your environment variables.
-let subscriptionKey = '49d2541df0f84c3798a1cc8a50ec9180'
-let endpoint = 'https://crypto-pi.cognitiveservices.azure.com/face/v1.0/detect'
+let subscriptionKey = 'd27e03ca4f2c492390973797c5092a56'
+let endpoint = 'https://crypto-pi.cognitiveservices.azure.com/face/v1.0/facelists/crypto-pi/persistedFaces'
 let imageUrl = 'https://raw.githubusercontent.com/PhilbertLou/cryptopipi/main/IMG_2877.JPG?token=AP3TC5VS2X2VEBQWSJSGJFC7YG22A'
 
 // Optionally, replace with your own image URL (for example a .jpg or .png URL).
@@ -144,8 +144,8 @@ router.post('/register', function(req,res){
         method: 'post',
         url: endpoint,
         params : {
-            detectionModel: 'detection_02',
-            returnFaceId: true
+            faceListId: 'crypto-pi',
+            detectionModel: 'detection_02'
         },
         data: {
             url: photo, 
@@ -156,7 +156,7 @@ router.post('/register', function(req,res){
         console.log('Status text: ' + response.statusText)
         console.log()
         console.log(response.data)
-        ID = response.data[0].faceId
+        ID = response.data.persistedFaceId
         console.log(ID)
         var user = User({username: username, password: password, balance: balance, ethId: 'feifjeiofjewiof', azureId: ID})
         // var user = User({username: username, password: password, piTag: tag, balance: balance, ethId: 'feifjeiofjewiof'}) //use this code after pi integration
