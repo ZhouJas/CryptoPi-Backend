@@ -7,6 +7,19 @@ const EthAccount = require('../models/EthAccount')
 const Web3 = require('web3')
 var web3 = new Web3('https://rinkeby.infura.io/v3/1f9e08b44e114893950fbe09995e6061');
 
+//azure stuff that may be mandatory to add
+'use strict';
+
+const axios = require('axios').default;
+
+// Add a valid subscription key and endpoint to your environment variables.
+let subscriptionKey = 'replace with your own subscription key'
+let endpoint = 'https://crypto-pi.cognitiveservices.azure.com/face/v1.0/facelists/crypto-pi/persistedFaces'
+let imageUrl = 'https://raw.githubusercontent.com/PhilbertLou/cryptopipi/main/IMG_2877.JPG?token=AP3TC5VS2X2VEBQWSJSGJFC7YG22A'
+
+// Optionally, replace with your own image URL (for example a .jpg or .png URL).
+//let imageUrl = 'https://raw.githubusercontent.com/Azure-Samples/cognitive-services-sample-data-files/master/ComputerVision/Images/faces.jpg'
+
 //http://localhost:8080/register
 // Request body --> JSON file 
 
@@ -100,6 +113,21 @@ router.post('/register', function (req, res) {
     const password = req.body.password;
     const privateKey = req.body.privateKey;
     const photo = req.body.photo;
+    ID = 'test';
+
+    axios({
+        method: 'post',
+        url: endpoint,
+        params : {
+            faceListId: 'crypto-pi',
+            detectionModel: 'detection_02'
+        },
+        data: {
+            url: photo, 
+        },
+        headers: { 'Ocp-Apim-Subscription-Key': subscriptionKey }
+    }).then(function (response) {
+        ID = response.data.persistedFaceId
     if (privateKey != null) {
         const account = web3.eth.accounts.privateKeyToAccount(privateKey);
         const ethAccount = EthAccount({ address: account.address, privateKey: account.privateKey })
@@ -122,8 +150,7 @@ router.post('/register', function (req, res) {
     const account = web3.eth.accounts.create();
     const ethAccount = EthAccount({ address: account.address, privateKey: account.privateKey })
     web3.eth.getBalance(account.address).then((ethBalance) => {
-
-        var user = User({ username: username, password: password, balance: ethBalance, ethAccount: ethAccount })
+        var user = User({ username: username, password: password, balance: ethBalance, ethAccount: ethAccount, azureId: ID})
         user.save(function (err) {
             if (err) {
                 res.send(err)
@@ -133,8 +160,8 @@ router.post('/register', function (req, res) {
         });
     }).catch((err) => {
         res.status(500).send('Error creating account' + err)
-    })}
-})
+    });
+}) 
 
 router.get('/balance', function (req, res) {
     //calls on eth network and returns a string displaying user balance in wei
@@ -225,44 +252,5 @@ router.get('/getTransactions', function (req, res) {
             res.status(500).send('Error fetching details:' + err)
         })
 })
-
-
-// This can be implemented later, should be an ez fix
-
-// router.post('/updateNote/:transactionID', function(req, res) {
-
-//     var transactionID = req.params.transactionID
-//     var newNote = req.query.note
-
-//     console.log('updating transaction ' + transactionID + ' with note: ' + newNote)
-//     const uid = res.locals.uid; // Get user ID
-//     User.findOne({uid: uid}).populate('transactions').then( (user) => {
-//         if (user == null) res.status(404).send('Error fetching  details')
-//         var foundTransaction;
-//         console.log(user.transactions)
-//         for (var i = 0; i < user.transactions.length; i++) {
-//             var transactionIndex = i
-//             if (user.transactions[transactionIndex].uid.localeCompare(course) == 0) {
-//                 foundTransaction = courseIndex
-//                 console.log('Found course!')
-//             }
-//         }
-
-//         if (foundTransaction == null) {
-//             if (user == null) res.status(404).send('Can\'t find transaction')
-//         } else {
-//             user.transactions[foundTransaction].note = newNote;
-//             user.save().then((usr) => {
-//                 res.send('Done!')
-//             })
-//             .catch((err) => {
-//                 res.send('Error saving data' + err)
-//             })
-//         }
-//     })
-//     .catch((err) => {
-//         res.status(500).send('Error fetching details:' + err)
-//     })
-// })
 
 module.exports = router
