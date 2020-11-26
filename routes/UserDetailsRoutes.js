@@ -13,7 +13,7 @@ var web3 = new Web3('https://rinkeby.infura.io/v3/1f9e08b44e114893950fbe09995e60
 const axios = require('axios').default;
 
 // Add a valid subscription key and endpoint to your environment variables.
-let subscriptionKey = 'replace with your own subscription key'
+let subscriptionKey = '073d80b4a8f748aa8632acafc333959a'
 let endpoint = 'https://crypto-pi.cognitiveservices.azure.com/face/v1.0/facelists/crypto-pi/persistedFaces'
 let imageUrl = 'https://raw.githubusercontent.com/PhilbertLou/cryptopipi/main/IMG_2877.JPG?token=AP3TC5VS2X2VEBQWSJSGJFC7YG22A'
 
@@ -118,50 +118,52 @@ router.post('/register', function (req, res) {
     axios({
         method: 'post',
         url: endpoint,
-        params : {
+        params: {
             faceListId: 'crypto-pi',
             detectionModel: 'detection_02'
         },
         data: {
-            url: photo, 
+            url: photo,
         },
         headers: { 'Ocp-Apim-Subscription-Key': subscriptionKey }
     }).then(function (response) {
         ID = response.data.persistedFaceId
-    if (privateKey != null) {
-        const account = web3.eth.accounts.privateKeyToAccount(privateKey);
-        const ethAccount = EthAccount({ address: account.address, privateKey: account.privateKey })
-        web3.eth.getBalance(account.address).then((ethBalance) => {
+        if (privateKey != null) {
+            const account = web3.eth.accounts.privateKeyToAccount(privateKey);
+            const ethAccount = EthAccount({ address: account.address, privateKey: account.privateKey })
+            web3.eth.getBalance(account.address).then((ethBalance) => {
 
-            var user = User({ username: username, password: password, balance: ethBalance, ethAccount: ethAccount })
-            user.save(function (err) {
-                if (err) {
-                    res.send(err)
-                    return
-                };
-                res.send(`Created account! address is ${user.ethAccount.address}, private key is ${user.ethAccount.privateKey}`)
+                var user = User({ username: username, password: password, balance: ethBalance, ethAccount: ethAccount, azureId: ID })
+                user.save(function (err) {
+                    if (err) {
+                        res.send(err)
+                        return
+                    };
+                    res.send(`Created account! address is ${user.ethAccount.address}, private key is ${user.ethAccount.privateKey}`)
+                    return;
+                });
+            }).catch((err) => {
+                res.status(500).send('Error creating account' + err)
                 return;
+            })
+        } else {
+            const account = web3.eth.accounts.create();
+            const ethAccount = EthAccount({ address: account.address, privateKey: account.privateKey })
+            web3.eth.getBalance(account.address).then((ethBalance) => {
+                var user = User({ username: username, password: password, balance: ethBalance, ethAccount: ethAccount, azureId: ID })
+                user.save(function (err) {
+                    if (err) {
+                        res.send(err)
+                        return
+                    };
+                    res.send(`Created account! address is ${user.ethAccount.address}, private key is ${user.ethAccount.privateKey}`)
+                });
+            }).catch((err) => {
+                res.status(500).send('Error creating account' + err)
             });
-        }).catch((err) => {
-            res.status(500).send('Error creating account' + err)
-            return;
-        })
-    } else {
-    const account = web3.eth.accounts.create();
-    const ethAccount = EthAccount({ address: account.address, privateKey: account.privateKey })
-    web3.eth.getBalance(account.address).then((ethBalance) => {
-        var user = User({ username: username, password: password, balance: ethBalance, ethAccount: ethAccount, azureId: ID})
-        user.save(function (err) {
-            if (err) {
-                res.send(err)
-                return
-            };
-            res.send(`Created account! address is ${user.ethAccount.address}, private key is ${user.ethAccount.privateKey}`)
-        });
-    }).catch((err) => {
-        res.status(500).send('Error creating account' + err)
-    });
-}) 
+        }
+    })
+})
 
 router.get('/balance', function (req, res) {
     //calls on eth network and returns a string displaying user balance in wei
@@ -199,18 +201,18 @@ router.get('/balance', function (req, res) {
 
 
 /*
-
+ 
 Without populate
-
-
+ 
+ 
 User {
     name: "Hello"
     ...
     transactions: [Transaction1, Transaction2, Transaction3]
 }
-
+ 
 With populate
-
+ 
 User {
     name: "Hello"
     ...
@@ -222,8 +224,8 @@ User {
         }    
     ]
 }
-
-
+ 
+ 
 */
 
 //http://localhost:8080/userDetails/getTransactions
