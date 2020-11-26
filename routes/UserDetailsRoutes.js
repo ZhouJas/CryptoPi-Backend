@@ -10,7 +10,7 @@ const PiTag = require('../models/PiTag')
 const axios = require('axios').default;
 
 // Add a valid subscription key and endpoint to your environment variables.
-let subscriptionKey = 'd27e03ca4f2c492390973797c5092a56'
+let subscriptionKey = 'replace with your own subscription key'
 let endpoint = 'https://crypto-pi.cognitiveservices.azure.com/face/v1.0/facelists/crypto-pi/persistedFaces'
 let imageUrl = 'https://raw.githubusercontent.com/PhilbertLou/cryptopipi/main/IMG_2877.JPG?token=AP3TC5VS2X2VEBQWSJSGJFC7YG22A'
 

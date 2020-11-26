@@ -118,8 +118,7 @@ router.post('/createTransaction', function(req, res) { // http://localhost:8080/
             }).then(function (response) {
 
                 console.log(response.data)
-                faceId = response.data[0].persistedFaceId
-                if (faceId != user.azureId && response.data[0].confidence > 0.7) {
+                if (response.data.length == 0 || response.data[0].persistedFaceId != user.azureId && response.data[0].confidence > 0.7) {
                     res.status(401).send(`Facial recognition failed`)
                     return
                 }
