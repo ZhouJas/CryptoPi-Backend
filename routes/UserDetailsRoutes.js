@@ -5,7 +5,7 @@ const User = require('../models/User')
 const PiTag = require('../models/PiTag')
 const EthAccount = require('../models/EthAccount')
 const Web3 = require('web3')
-var web3 = new Web3('https://rinkeby.infura.io/v3/1f9e08b44e114893950fbe09995e6061');
+var web3 = new Web3('https://rinkeby.infura.io/examplelink'); //API Provider link here
 
 //azure stuff that may be mandatory to add
 'use strict';
