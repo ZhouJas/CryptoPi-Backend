@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const User = require('../models/User')
 const Web3 = require('web3')
-var web3 = new Web3('https://rinkeby.infura.io/v3/1f9e08b44e114893950fbe09995e6061');
+var web3 = new Web3('https://rinkeby.infura.io/sampleaddress'); //API provider here
 const Transaction = require('../models/Transaction')
 
 
